@@ -2,7 +2,7 @@ openapi: 3.0.0
 info:
   version: 1.0.0
   title: Integration.Demo
-  description: Integration.Demo.Swagger v1
+  description: Integration.Demo.Swagger v2
 paths: {}
 servers:
   # Added by API Auto Mocking Plugin
