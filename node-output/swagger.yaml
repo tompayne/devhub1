@@ -1,0 +1,232 @@
+swagger: '2.0'
+info:
+  version: '1.2'
+  title: SimpleCalc
+# host: t6dve4zn25.execute-api.us-west-2.amazonaws.com
+# basePath: /demo tp tp tp
+schemes:
+  - https
+paths:
+  /:
+    get:
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: op
+          in: query
+          required: false
+          type: string
+        - name: a
+          in: query
+          required: false
+          type: string
+        - name: b
+          in: query
+          required: false
+          type: string
+      responses:
+        '200':
+          description: 200 response
+          schema:
+            $ref: '#/definitions/Result'
+      x-amazon-apigateway-integration:
+        requestTemplates:
+          application/json: |-
+            #set($inputRoot = $input.path('$'))
+            {
+              "a" : $input.params('a'),
+              "b" : $input.params('b'),
+              "op" : "$input.params('op')"
+            }
+        uri: 'arn:aws:apigateway:us-west-2:lambda:path/2015-03-31/functions/arn:aws:lambda:us-west-2:123456789012:function:Calc/invocations'
+        passthroughBehavior: when_no_templates
+        httpMethod: POST
+        responses:
+          default:
+            statusCode: '200'
+            responseTemplates:
+              application/json: |-
+                #set($inputRoot = $input.path('$'))
+                {
+                  "input" : {
+                    "a" : $inputRoot.a,
+                    "b" : $inputRoot.b,
+                    "op" : "$inputRoot.op"
+                  },
+                  "output" : {
+                    "c" : $inputRoot.c
+                  }
+                }
+        type: aws
+    post:
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: Input
+          required: true
+          schema:
+            $ref: '#/definitions/Input'
+      responses:
+        '200':
+          description: 200 response
+          schema:
+            $ref: '#/definitions/Result'
+      x-amazon-apigateway-integration:
+        uri: 'arn:aws:apigateway:us-west-2:lambda:path/2015-03-31/functions/arn:aws:lambda:us-west-2:123456789012:function:Calc/invocations'
+        passthroughBehavior: when_no_match
+        httpMethod: POST
+        responses:
+          default:
+            statusCode: '200'
+            responseTemplates:
+              application/json: |-
+                #set($inputRoot = $input.path('$'))
+                {
+                  "input" : {
+                    "a" : $inputRoot.a,
+                    "b" : $inputRoot.b,
+                    "op" : "$inputRoot.op"
+                  },
+                  "output" : {
+                    "c" : $inputRoot.c
+                  }
+                }
+        type: aws
+  '/{a}':
+    x-amazon-apigateway-any-method:
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: a
+          in: path
+          required: true
+          type: string
+      responses:
+        '404':
+          description: 404 response
+      x-amazon-apigateway-integration:
+        requestTemplates:
+          application/json: '{"statusCode": 200}'
+        passthroughBehavior: when_no_match
+        responses:
+          default:
+            statusCode: '404'
+            responseTemplates:
+              application/json: '{ "Message" : "Can''t $context.httpMethod $context.resourcePath" }'
+        type: mock
+  '/{a}/{b}':
+    x-amazon-apigateway-any-method:
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: a
+          in: path
+          required: true
+          type: string
+        - name: b
+          in: path
+          required: true
+          type: string
+      responses:
+        '404':
+          description: 404 response
+      x-amazon-apigateway-integration:
+        requestTemplates:
+          application/json: '{"statusCode": 200}'
+        passthroughBehavior: when_no_match
+        responses:
+          default:
+            statusCode: '404'
+            responseTemplates:
+              application/json: '{ "Message" : "Can''t $context.httpMethod $context.resourcePath" }'
+        type: mock
+  '/{a}/{b}/{op}':
+    get:
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: a
+          in: path
+          required: true
+          type: string
+        - name: b
+          in: path
+          required: true
+          type: string
+        - name: op
+          in: path
+          required: true
+          type: string
+      responses:
+        '200':
+          description: 200 response
+          schema:
+            $ref: '#/definitions/Result'
+      x-amazon-apigateway-integration:
+        requestTemplates:
+          application/json: |-
+            #set($inputRoot = $input.path('$'))
+            {
+              "a" : $input.params('a'),
+              "b" : $input.params('b'),
+              "op" : "$input.params('op')"
+            }
+        uri: 'arn:aws:apigateway:us-west-2:lambda:path/2015-03-31/functions/arn:aws:lambda:us-west-2:123456789012:function:Calc/invocations'
+        passthroughBehavior: when_no_templates
+        httpMethod: POST
+        responses:
+          default:
+            statusCode: '200'
+            responseTemplates:
+              application/json: |-
+                #set($inputRoot = $input.path('$'))
+                {
+                  "input" : {
+                    "a" : $inputRoot.a,
+                    "b" : $inputRoot.b,
+                    "op" : "$inputRoot.op"
+                  },
+                  "output" : {
+                    "c" : $inputRoot.c
+                  }
+                }
+        type: aws
+definitions:
+  Input:
+    type: object
+    properties:
+      a:
+        type: number
+      b:
+        type: number
+      op:
+        type: string
+    title: Input
+  Output:
+    type: object
+    properties:
+      c:
+        type: number
+    title: Output
+  Result:
+    type: object
+    properties:
+      input:
+        $ref: '#/definitions/Input'
+      output:
+        $ref: '#/definitions/Output'
+    title: Result
+# Added by API Auto Mocking Plugin
+host: virtserver.swaggerhub.com
+basePath: /ClearChoice-v1/Calc/1.2
